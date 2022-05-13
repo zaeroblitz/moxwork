@@ -4,6 +4,8 @@ namespace App\Actions\Fortify;
 
 use App\Models\Team;
 use App\Models\User;
+use App\Models\UserDetail;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -36,6 +38,14 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 $this->createTeam($user);
+
+                $user_detail = new UserDetail;
+                $user_detail->users_id = $user->id;
+                $user_detail->photo = NULL;
+                $user_detail->role = NULL;
+                $user_detail->contact_number = NULL;
+                $user_detail->biography = NULL;
+                $user_detail->save();
             });
         });
     }
