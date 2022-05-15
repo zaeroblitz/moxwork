@@ -5,8 +5,18 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
+
+use App\Models\Order;
+
 class RequestController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,9 @@ class RequestController extends Controller
      */
     public function index()
     {
-        return view('pages.Dashboard.request.index');
+        $orders = Order::where('buyer_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+
+        return view('pages.Dashboard.request.index', compact('orders'));
     }
 
     /**
@@ -24,7 +36,7 @@ class RequestController extends Controller
      */
     public function create()
     {
-        //
+        return abort(404);
     }
 
     /**
@@ -35,7 +47,7 @@ class RequestController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return abort(404);
     }
 
     /**
@@ -46,7 +58,10 @@ class RequestController extends Controller
      */
     public function show($id)
     {
-        return view('pages.Dashboard.request.detail');
+        // detail
+        $order = Order::where('id', $id)->first();
+
+        return view('pages.Dashboard.request.detail', compact('order'));
     }
 
     /**
@@ -57,7 +72,7 @@ class RequestController extends Controller
      */
     public function edit($id)
     {
-        //
+        return abort(404);
     }
 
     /**
@@ -69,7 +84,7 @@ class RequestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return abort(404);
     }
 
     /**
@@ -80,11 +95,16 @@ class RequestController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return abort(404);
     }
 
     public function approve($id)
     {
+        $order = Order::where('id', $id)->first();
+        $order->order_status_id = 1;
+        $order->save();
 
+        Alert::toast('Approve has been success', 'success');
+        return redirect()->route('member.request.index');
     }
 }
