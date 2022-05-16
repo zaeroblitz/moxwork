@@ -11,7 +11,7 @@
                     My Services
                 </h2>
                 <p class="text-sm text-gray-400">
-                    3 Total Services
+                    {{ Auth::user()->service->count() }} Total Services
                 </p>
             </div>
             <div class="col-span-4 lg:text-right">
@@ -49,68 +49,63 @@
                                 <span
                                     class="inline-flex items-center justify-center px-3 py-2 mb-4 mr-2 text-xs leading-none text-green-500 rounded-full bg-serv-green-badge">Active</span>
 
-                                <!-- details heading -->
+                                <!-- Title -->
                                 <div class="details-heading">
-                                    <h1 class="text-2xl font-semibold">I Will Design WordPress eCommerce Modules</h1>
+                                    <h1 class="text-2xl font-semibold">{{ $order->service->title ?? '' }}</h1>
                                     <div class="my-3">
                                         @include('components.Dashboard.rating')
                                     </div>
                                 </div>
+
+                                {{-- Service Thumbnails --}}
                                 <div class="p-3 my-4 bg-gray-100 rounded-lg image-gallery" x-data="gallery()">
                                     <img :src="featured" alt="" class="rounded-lg cursor-pointer w-100" data-lity>
                                     <div class="flex overflow-x-scroll hide-scroll-bar dragscroll">
                                         <div class="flex mt-2 flex-nowrap">
-                                            <img :class="{'border-4 border-serv-button': active === 1}"
-                                                @click="changeThumbnail('https://source.unsplash.com/_SgRNwAVNKw/1600x900/',1)"
-                                                src="https://source.unsplash.com/_SgRNwAVNKw/250x160/" alt=""
-                                                class="inline-block w-24 mr-2 rounded-lg cursor-pointer">
-                                            <img :class="{'border-4 border-serv-button': active === 2}"
-                                                @click="changeThumbnail('https://source.unsplash.com/GXNo-OJynTQ/1600x900/',2)"
-                                                src="https://source.unsplash.com/GXNo-OJynTQ/250x160/" alt=""
-                                                class="inline-block w-24 mr-2 rounded-lg cursor-pointer">
-                                            <img :class="{'border-4 border-serv-button': active === 3}"
-                                                @click="changeThumbnail('https://source.unsplash.com/x-HpilsdKEk/1600x900/',3)"
-                                                src="https://source.unsplash.com/x-HpilsdKEk/250x160/" alt=""
-                                                class="inline-block w-24 mr-2 rounded-lg cursor-pointer">
-                                            <img :class="{'border-4 border-serv-button': active === 4}"
-                                                @click="changeThumbnail('https://source.unsplash.com/hLit2zL-Dhk/1600x900/',4)"
-                                                src="https://source.unsplash.com/hLit2zL-Dhk/250x160/" alt=""
-                                                class="inline-block w-24 mr-2 rounded-lg cursor-pointer">
-                                            <img :class="{'border-4 border-serv-button': active === 5}"
-                                                @click="changeThumbnail('https://source.unsplash.com/i1VQZsU86ok/1600x900/',5)"
-                                                src="https://source.unsplash.com/i1VQZsU86ok/250x160/" alt=""
-                                                class="inline-block w-24 mr-2 rounded-lg cursor-pointer">
-                                            <img :class="{'border-4 border-serv-button': active === 6}"
-                                                @click="changeThumbnail('https://source.unsplash.com/iEiUITs149M/1600x900/',6)"
-                                                src="https://source.unsplash.com/iEiUITs149M/250x160/" alt=""
-                                                class="inline-block w-24 mr-2 rounded-lg cursor-pointer">
+                                            @php $active = 0 @endphp
+                                            @forelse ($service_thumbnails->take(3) as $thumbnail)
+                                                @php $active++ @endphp
+                                                <img :class="{'border-4 border-serv-button': active === {{ $active }}}"
+                                                @click="changeThumbnail('{{ Storage::url($thumbnail->thumbnail) }}', 1)"
+                                                src="{{ Storage::url($thumbnail->thumbnail) }}" alt="thumbnail"
+                                                class="inline-block mr-2 rounded-lg cursor-pointer w-36 object-cover">
+                                            @empty
+                                                {{-- Empty State --}}
+                                            @endforelse
                                         </div>
                                     </div>
                                 </div>
                                 <div class="content">
                                     <div>
-                                        <!-- The tabs content -->
                                         <div class="leading-8 text-md">
-                                            <h2 class="text-xl font-semibold">About This <span
-                                                    class="text-serv-button">Services</span></h2>
+                                            {{-- Heading --}}
+                                            <h2 class="text-xl font-semibold">
+                                                About This 
+                                                <span class="text-serv-button">Services</span>
+                                            </h2>
+
+                                            {{-- Descriptiion --}}
                                             <div class="mt-4 mb-8 content-description">
                                                 <p>
-                                                    I will design wordpress ecommerce modules, professional website for
-                                                    you using WordPress! With this Services
+                                                    {{ $order->service->description ?? '' }}
                                                 </p>
                                             </div>
+
                                             <h3 class="my-4 text-lg font-semibold">Why choose my Service?</h3>
+
+                                            {{-- Service Advantage --}}
                                             <ul class="mb-4 list-check">
-                                                <li class="pl-10 my-2">Fast delivery</li>
-                                                <li class="pl-10 my-2">Wide plugin support within WordPress</li>
-                                                <li class="pl-10 my-2">I can design logos and such for your website</li>
-                                                <li class="pl-10 my-2">Easily Communicate with me</li>
+                                                @forelse ($user_advantages as $user_advantage)
+                                                    <li class="pl-10 my-2">{{ $user_advantage->advantage }}</li>
+                                                @empty
+                                                    {{-- Empty State --}}
+                                                @endforelse
                                             </ul>
+
                                             <p class="mb-4">
-                                                If you only require modifications made to an existing WordPress website
-                                                that you have, I have a different Services for that, which you can find
-                                                on my profile!
+                                                {{ $order->service->note ?? '' }}
                                             </p>
+
                                             <p class="mb-4 font-medium">
                                                 Contact me to get started!
                                             </p>
@@ -147,16 +142,16 @@
                                                     d="M16 3L18.8586 5.85858C18.9247 5.92468 18.9247 6.06332 18.8586 6.14142L16 9"
                                                     stroke="#082431" stroke-width="1.5" stroke-linecap="round" />
                                             </svg>
-                                            1 Revision Limit
+                                            {{ $order->service->revision_limit }} Revision Limit
                                         </div>
                                     </div>
                                     <div class="px-4 pt-4 pb-2 features-list">
                                         <ul class="mb-4 text-sm list-check">
-                                            <li class="pl-10 my-4">3 Pages</li>
-                                            <li class="pl-10 my-4">Customized Design</li>
-                                            <li class="pl-10 my-4">Responsive Design</li>
-                                            <li class="pl-10 my-4">3 Plugins/Extensions</li>
-                                            <li class="pl-10 my-4">E-Commerce Functionality</li>
+                                            @forelse ($service_advantages as $service_advantage)
+                                                    <li class="pl-10 my-4">{{ $service_advantage->advantage }}</li>
+                                                @empty
+                                                    {{-- Empty State --}}
+                                                @endforelse
                                         </ul>
                                     </div>
                                     <div class="px-4">
@@ -166,7 +161,7 @@
                                                     Price starts from:
                                                 </td>
                                                 <td class="mb-4 text-xl font-semibold text-right text-serv-button">
-                                                    Rp120.000
+                                                    Rp. {{ number_format($order->service->price) ?? 0 }}
                                                 </td>
                                             </tr>
 
@@ -189,7 +184,7 @@
                                     class="inline-flex justify-center px-4 py-2 mr-4 text-sm font-medium text-gray-700 bg-white border border-gray-600 rounded-lg shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300">
                                     See Reviews
                                 </a>
-                                <a href="{{ route('member.service.edit', '1') }}"
+                                <a href="{{ route('member.service.edit', $order->service->id) }}"
                                     class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white border border-transparent rounded-lg shadow-sm bg-serv-email hover:bg-serv-email-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-serv-email">
                                     Edit Service
                                 </a>
@@ -207,7 +202,7 @@
     <script>
         function gallery() {
             return {
-                featured: 'https://source.unsplash.com/_SgRNwAVNKw/1600x900/',
+                featured: '{{ Storage::url($service_thumbnails->first()->thumbnail) }}',
                 active: 1,
                 changeThumbnail: function(url, position) {
                     this.featured = url;

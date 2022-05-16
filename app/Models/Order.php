@@ -37,7 +37,7 @@ class Order extends Model
         return $this->belongsTo(Service::class, 'services_id', 'id');
     }
 
-    public function user_freelance()
+    public function user_freelancer()
     {
         return $this->belongsTo(User::class, 'freelancer_id', 'id');
     }

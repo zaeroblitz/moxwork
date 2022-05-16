@@ -56,7 +56,7 @@
 
 {{-- Content --}}
 <div class="content">
-    <!-- services -->
+    <!-- Services -->
     <div class="bg-serv-services-bg overflow-hidden">
         <div class="pt-16 pb-16 lg:pb-20 lg:pl-24 md:pl-16 sm:pl-8 pl-8 mx-auto">
             <div class="flex flex-col w-full">
@@ -65,14 +65,17 @@
             </div>
             <div class="flex overflow-x-scroll pb-10 hide-scroll-bar dragscroll -mx-3">
                 <div class="flex flex-nowrap">
-                    @include('components.Landing.service')
+                    @forelse ($services->take(3) as $service)
+                        @include('components.Landing.service')
+                    @empty
+                        {{-- Empty State --}}
+                    @endforelse
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!-- call to action -->
+    <!-- Call to Action -->
     <div class="py-10 lg:py-24 flex lg:flex-row flex-col items-center cta-bg">
         <!-- Left Column -->
         <div class="w-full lg:w-1/2 text-center justify-center flex lg:mb-0 mb-12">
@@ -80,6 +83,7 @@
                 <img id="hero" src="{{ asset('assets/images/video-placeholder.png') }}" alt="" class="p-5" />
             </a>
         </div>
+
         <!-- Right Column -->
         <div class="lg:w-1/2 w-full flex flex-col lg:items-start items-center lg:text-left text-center">
             <h2 class="md:text-4xl text-3xl font-semibold mb-10 lg:leading-normal text-medium-black">
@@ -91,7 +95,7 @@
                 remote workers to help you accomplishing <br class="lg:block hidden">
                 your projects.
             </p>
-            <a href="explore.php"
+            <a href="{{ route('landing.explore') }}"
                 class="bg-serv-button px-10 py-4 text-base text-white font-semibold rounded-xl cursor-pointer focus:outline-none tracking-wide">
                 Learn More
             </a>

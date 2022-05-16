@@ -1,21 +1,34 @@
 <!-- Desktop sidebar -->
 <aside class="z-20 flex-shrink-0 hidden w-64 overflow-y-auto bg-white md:block" aria-label="aside">
     <div class="text-serv-bg">
+        {{-- Company Logo --}}
         <div class="" href="#">
             <img src="{{ asset('assets/images/logo.svg') }}" alt="" class="object-center mx-auto my-8 ">
         </div>
-        <div class="flex items-center pt-8 pl-5 space-x-2 border-t border-gray-100">
-            <!--Author's profile photo-->
-            <img class="object-cover object-center mr-1 rounded-full w-14 h-14"
-                src="{{ url('https://randomuser.me/api/portraits/men/1.jpg') }}" alt="random user" />
-            <div>
-                <!--Author name-->
+
+        {{-- User Mini Profile --}}
+        <div class="flex items-center pt-8 pl-5 space-x-2 border-t border-gray-100">        
+            @if (Auth::user()->user_detail()->first()->photo != NULL)
+                <img class="object-cover object-center mr-1 rounded-full w-14 h-14" alt="avatar"
+            src="{{ Storage::url(Auth::user()->user_detail()->first()->photo) }}" />
+            @else
+                <span class="inline-block w-14 h-14 overflow-hidden bg-gray-100 rounded-full">
+                    <svg class="w-full h-full text-gray-300" fill="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </span>
+            @endif                
+            <div>                
                 <p class="font-semibold text-gray-900 text-md">{{ Auth::user()->name }}</p>
                 <p class="text-sm font-light text-serv-text">
-                    Website Developer
+                    {{ Auth::user()->user_detail()->first()->role }}
                 </p>
             </div>
         </div>
+
+        {{-- Dashboard --}}
         <ul class="mt-6">
             <li class="relative px-6 py-3">
                 @if (
@@ -34,7 +47,8 @@
                 </a>
             </li>
         </ul>
-        
+       
+        {{-- Other Links --}}
         <ul>
             {{-- Service --}}
             <li class="relative px-6 py-3">
@@ -62,8 +76,7 @@
                     </svg>     
                 @endif                                                   
                     <span class="ml-4">My Services</span>
-                    <span class="inline-flex items-center justify-center px-3 py-2 ml-auto text-xs font-bold leading-none text-green-500 rounded-full bg-serv-green-badge">2</span>
-
+                    <span class="inline-flex items-center justify-center px-3 py-2 ml-auto text-xs font-bold leading-none text-green-500 rounded-full bg-serv-green-badge">{{ count(Auth::user()->service) }}</span>
                 </a>
             </li>
 
@@ -91,7 +104,7 @@
                         </svg>  
                     @endif                                                      
                     <span class="ml-4">My Request</span>
-                    <span class="inline-flex items-center justify-center px-3 py-2 ml-auto text-xs font-bold leading-none text-green-500 rounded-full bg-serv-green-badge">3</span>
+                    <span class="inline-flex items-center justify-center px-3 py-2 ml-auto text-xs font-bold leading-none text-green-500 rounded-full bg-serv-green-badge">{{ Auth::user()->order_buyer->count() }}</span>
 
                 </a>
             </li>
@@ -122,7 +135,7 @@
                         </svg>   
                     @endif                                     
                     <span class="ml-4">My Orders</span>
-                    <span class="inline-flex items-center justify-center px-3 py-2 ml-auto text-xs font-bold leading-none text-green-500 rounded-full bg-serv-green-badge">10</span>
+                    <span class="inline-flex items-center justify-center px-3 py-2 ml-auto text-xs font-bold leading-none text-green-500 rounded-full bg-serv-green-badge">{{ Auth::user()->order_freelancer->count() }}</span>
 
                 </a>
             </li>

@@ -25,7 +25,7 @@
             <div class="flex flex-col flex-1 w-full">
                 @include('components.dashboard.header')
 
-                {{-- @include('sweetalert::alert') --}}
+                @include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@9"])
 
                 @yield('content')
             </div>

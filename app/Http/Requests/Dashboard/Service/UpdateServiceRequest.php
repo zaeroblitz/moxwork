@@ -18,7 +18,7 @@ class UpdateServiceRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -38,7 +38,7 @@ class UpdateServiceRequest extends FormRequest
             'delivery_time' => [
                 'required', 'integer', 'max:100'
             ],
-            'revision_time' => [
+            'revision_limit' => [
                 'required', 'integer', 'max:100'
             ],
             'price' => [

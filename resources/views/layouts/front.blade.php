@@ -15,7 +15,7 @@
         
         @include('includes.Landing.header')
 
-            {{-- @include('sweetalert::alert') --}}
+            @include('sweetalert::alert', ['cdn' => "https://cdn.jsdelivr.net/npm/sweetalert2@9"])
 
             @yield('content')
 

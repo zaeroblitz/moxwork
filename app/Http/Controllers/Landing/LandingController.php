@@ -107,7 +107,7 @@ class LandingController extends Controller
         $service_thumbnails = ServiceThumbnail::where('services_id', $service->id)->get();
         $taglines = Tagline::where('services_id', $service->id)->get();
 
-        return view('pages.Landing.detail', compact('service', 'user_advantages', 'service_advantages', 'service_thumnails', 'taglines'));
+        return view('pages.Landing.detail', compact('service', 'user_advantages', 'service_advantages', 'service_thumbnails', 'taglines'));
     }
 
     public function booking($id)
@@ -117,7 +117,7 @@ class LandingController extends Controller
 
         // Booking Validation
         if ($service->users_id == $user_buyer) {
-            Alert::toast('Sorry, members cannot book their own service!');
+            Alert::toast('Sorry, members cannot book their own service!', 'error');
             return back();
         }
 
@@ -132,7 +132,7 @@ class LandingController extends Controller
         $order->save();
 
         $order_detail = Order::where('id', $order->id)->first();
-        return redirect()->route('landing.detail-booking');
+        return redirect()->route('landing.detail-booking', $order->id);
     }
 
     public function detail_booking($id)

@@ -17,7 +17,6 @@ use App\Models\UserAdvantage;
 use App\Models\ServiceAdvantage;
 use App\Models\ServiceThumbnail;
 use App\Models\Tagline;
-use App\Models\User;
 
 class ServiceController extends Controller
 {
@@ -35,7 +34,7 @@ class ServiceController extends Controller
     {
         $services = Service::where('users_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();        
 
-        return view('pages.Dashboard.service.index', compact('services', 'user_advantages', 'service_advantages', 'service_thumbnails', 'taglines'));
+        return view('pages.Dashboard.service.index', compact('services'));
     }
 
     /**
@@ -91,12 +90,14 @@ class ServiceController extends Controller
         }
 
         // Store to taglines
-        foreach ($data['tagline'] as $value) {
-            $tagline = new Tagline;
-            $tagline->services_id = $service->id;
-            $tagline->tagline = $value;
-            $tagline->save();
-        }
+        if (isset($data['tagline'])) {
+            foreach ($data['tagline'] as $value) {
+                $tagline = new Tagline;
+                $tagline->services_id = $service->id;
+                $tagline->tagline = $value;
+                $tagline->save();
+            }
+        }        
 
         Alert::toast('Service has been added', 'success');
         return redirect()->route('member.service.index');
@@ -124,9 +125,9 @@ class ServiceController extends Controller
         $user_advantages = UserAdvantage::where('services_id', $service->id)->get();
         $service_advantages = ServiceAdvantage::where('services_id', $service->id)->get();
         $service_thumbnails = ServiceThumbnail::where('services_id', $service->id)->get();
-        $taglines = Tagline::where('services_id', $service->id);
+        $taglines = Tagline::where('services_id', $service->id)->get();
 
-        return view('pages.Dashboard.service.edit', compact('user_advantages', 'service_advantages', 'service_thumbnails', 'taglines'));
+        return view('pages.Dashboard.service.edit', compact('service', 'user_advantages', 'service_advantages', 'service_thumbnails', 'taglines'));
     }
 
     /**
@@ -144,7 +145,7 @@ class ServiceController extends Controller
         $service->update($data);
 
         // Update to User Advantages
-        foreach ($request['advantage-user'] as $key => $value) {
+        foreach ($request['advantage-users'] as $key => $value) {
             $user_advantage = UserAdvantage::find($key);    
             $user_advantage->advantage = $value;
             $user_advantage->save();
@@ -161,7 +162,7 @@ class ServiceController extends Controller
         }
 
         // Update to Service Advantages
-        foreach ($request['advantage-service'] as $key => $value) {
+        foreach ($request['advantage-services'] as $key => $value) {
             $service_advantage = ServiceAdvantage::find($key);    
             $service_advantage->advantage = $value;
             $service_advantage->save();
@@ -178,7 +179,7 @@ class ServiceController extends Controller
         }
 
         // Update to Taglines
-        foreach ($request['tagline'] as $key => $value) {
+        foreach ($request['taglines'] as $key => $value) {
             $tagline = Tagline::find($key);    
             $tagline->tagline = $value;
             $tagline->save();
@@ -203,18 +204,17 @@ class ServiceController extends Controller
                 // store thumbnail
                 $path = $file->store('assets/service/thumbnails', 'public');
 
-                // update thumbnail
-                $service_thumbnail = new ServiceThumbnail;
-                $service_thumbnail->services_id = $service->id;
-                $service_thumbnail->thumbnail = $path;
-                
                 // delete old thumbnail
                 $old_thumbnail_path = 'storage/' . $old_thumbnail_data['thumbnail'];
                 if (Storage::exists($old_thumbnail_path)) {
-                    Storage::destroy($old_thumbnail_path);
+                    Storage::delete($old_thumbnail_path);
                 } else {
-                    Storage::destroy('storage/app/public/' . $old_thumbnail_data['thumbnail']);
+                    Storage::delete('storage/app/public/' . $old_thumbnail_data['thumbnail']);
                 }
+                
+                // update thumbnail
+                $old_thumbnail_data->thumbnail = $path;
+                $old_thumbnail_data->save();
             }
         }
 
@@ -230,7 +230,7 @@ class ServiceController extends Controller
             }
         }
 
-        Alert::toast('Thumbnails has been updated', 'success');
+        Alert::toast('Service has been updated', 'success');
         return redirect()->route('member.service.index');
     }
 
@@ -240,7 +240,7 @@ class ServiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
         return abort(404);
     }

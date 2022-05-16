@@ -79,13 +79,13 @@ class User extends Authenticatable
         return $this->hasMany(Service::class, 'users_id');
     }
 
-    public function order_freelance()
+    public function order_freelancer()
     {
         return $this->hasMany(Order::class, 'freelancer_id');
     }
 
     public function order_buyer()
     {
-        return $this->hasMany(Service::class, 'buyer_id');
+        return $this->hasMany(Order::class, 'buyer_id');
     }
 }

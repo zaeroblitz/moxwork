@@ -65,14 +65,14 @@ class MyOrderController extends Controller
      */
     public function show(Order $order)
     {
-        $service = Service::where('id', $order['service_id'])->first();
+        $service = Service::where('id', $order->services_id)->first();
 
         $user_advantages = UserAdvantage::where('services_id', $service->id)->get();
         $service_advantages = ServiceAdvantage::where('services_id', $service->id)->get();
         $service_thumbnails = ServiceThumbnail::where('services_id', $service->id)->get();        
         $taglines = Tagline::where('services_id', $service->id)->get();        
 
-        return view('pages.Dashboard.order.detail', compact('user_advantages', 'service_advantages', 'service_thumbnails', 'taglines'));
+        return view('pages.Dashboard.order.detail', compact('order', 'user_advantages', 'service_advantages', 'service_thumbnails', 'taglines'));
     }
 
     /**
@@ -83,7 +83,7 @@ class MyOrderController extends Controller
      */
     public function edit(Order $order)
     {
-        return view('pages.Dashboard.order.edit', compact($order));
+        return view('pages.Dashboard.order.edit', compact('order'));
     }
 
     /**
@@ -125,7 +125,7 @@ class MyOrderController extends Controller
     {
         $order = Order::find($id);
         $order->order_status_id = 2;
-        $order->save;
+        $order->save();
 
         Alert::toast('Order has been accepted', 'success');
         return back();
@@ -135,7 +135,7 @@ class MyOrderController extends Controller
     {
         $order = Order::find($id);
         $order->order_status_id = 3;
-        $order->save;
+        $order->save();
 
         Alert::toast('Order has been rejected', 'success');
         return back();
